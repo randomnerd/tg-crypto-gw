@@ -4,10 +4,11 @@ import { ConnectionManager, ConnectionOptions, Connection } from 'typeorm'
 import { EventEmitter } from 'events'
 import { User } from '../entity/user'
 import { TelegramLog } from '../entity/telegram-log'
+import { Payment } from '../entity/payment'
 
 const ormconfig = {
     ...config.get<ConnectionOptions>('db'),
-    entities: [User, TelegramLog],
+    entities: [User, TelegramLog, Payment],
     // entities: [path.join(__dirname, '..', 'entity', '**/*.{ts,js}')],
 }
 

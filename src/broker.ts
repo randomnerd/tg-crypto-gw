@@ -20,8 +20,8 @@ process.on('SIGTERM', terminate)
 
 export async function bootstrap() {
     broker.loadService(path.join(__dirname, 'services', 'user.service'))
-    // broker.loadService(path.join(__dirname, 'services', 'product.service'))
-    broker.loadService(path.join(__dirname, 'services', 'api.service'))
+    // broker.loadService(path.join(__dirname, 'services', 'api.service'))
+    broker.loadService(path.join(__dirname, 'services', 'payment.service'))
     broker.loadService(path.join(__dirname, 'services', 'telegram.service'))
     broker.loadService(path.join(__dirname, 'services', 'telegram-log.service'))
     await broker.start().catch(broker.logger.error)

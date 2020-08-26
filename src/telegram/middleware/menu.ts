@@ -2,10 +2,13 @@ import { MenuTemplate, MenuMiddleware } from 'telegraf-inline-menu'
 import { ExtendedContext } from '../context'
 import { Composer } from 'telegraf'
 
-const menu = new MenuTemplate<ExtendedContext>(() => 'Main menu')
+const menu = new MenuTemplate<ExtendedContext>(ctx => {
+    if (!ctx.dbUser) return 'Hey, anon!'
+    return `Hey, ${ctx.dbUser.username ?? ctx.dbUser.first_name}`
+})
 
 let mainMenuToggle = false
-menu.toggle('toggle me', 'toggle me', {
+menu.toggle('Toggle menu', 'toggle me', {
     set: (_, newState) => {
         mainMenuToggle = newState
         // Update the menu afterwards
@@ -13,24 +16,10 @@ menu.toggle('toggle me', 'toggle me', {
     },
     isSet: () => mainMenuToggle,
 })
-menu.interact('update after action', 'update afterwards', {
-    joinLastRow: true,
+menu.interact('Make payment', 'create-payment', {
     hide: () => mainMenuToggle,
     do: async ctx => {
-        await ctx.answerCbQuery('I will update the menu now…')
-
-        return true
-
-        // You can return true to update the same menu or use a relative path
-        // For example '.' for the same menu or '..' for the parent menu
-        // return '.'
-    },
-})
-menu.interact('Create product', 'create-product', {
-    hide: () => mainMenuToggle,
-    do: async ctx => {
-        await ctx.scene.enter('createProduct', {})
-        console.dir(ctx.wizard, { depth: 2 })
+        await ctx.scene.enter('create-payment', {})
         return true
     },
 })

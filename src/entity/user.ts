@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm'
+import { Entity, Column, PrimaryColumn, Index } from 'typeorm'
 import { Base } from './base'
 
 @Entity()
@@ -13,9 +13,11 @@ export class User extends Base {
     last_name?: string
 
     @Column()
+    @Index()
     is_bot: boolean
 
     @Column({ nullable: true })
+    @Index({ sparse: true })
     username?: string
 
     @Column({ nullable: true })

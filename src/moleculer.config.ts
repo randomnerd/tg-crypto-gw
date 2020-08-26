@@ -145,7 +145,7 @@ const brokerConfig: BrokerOptions = {
 
     // Watch the loaded services and hot reload if they changed.
     // You can also enable it in Moleculer Runner with `--hot` argument
-    hotReload: true,
+    hotReload: false,
 
     // Register custom middlewares
     middlewares: [],

@@ -9,11 +9,13 @@
       "extends": ["plugin:prettier/recommended", "prettier/@typescript-eslint"],
       "rules": {
         "sort-imports": ["off", { "ignoreCase": true }],
+        "no-void": "off",
         "@typescript-eslint/ban-ts-comment": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-non-null-assertion": "warn",
         "@typescript-eslint/promise-function-async": "off",
+        "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/strict-boolean-expressions": "off"
       }
     }
@@ -22,6 +24,5 @@
     "no-warning-comments": "warn"
   },
   "ignorePatterns": ["/lib/", "/typings/"],
-  "reportUnusedDisableDirectives": true,
-  "plugins": ["ava"]
+  "reportUnusedDisableDirectives": false
 }

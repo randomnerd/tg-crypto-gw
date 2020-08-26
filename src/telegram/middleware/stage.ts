@@ -1,4 +1,4 @@
-import { CreateProductScene } from './scenes/createProduct.scene'
+import { CreateProductScene } from './scenes/createPayment.scene'
 import { Composer, Stage } from 'telegraf'
 import { ExtendedContext } from '../context'
 

@@ -18,5 +18,10 @@ module.exports = {
     launchOptions: {
       polling: { timeout: 1 }
     }
+  },
+  capusta: {
+    email: process.env.CAPUSTA_EMAIL,
+    token: process.env.CAPUSTA_TOKEN,
+    projectCode: process.env.CAPUSTA_PROJECT_ID
   }
 }
