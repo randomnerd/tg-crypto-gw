@@ -11,7 +11,7 @@ module.exports = {
     ssl: process.env.TYPEORM_SSL || false,
     logging: process.env.TYPEORM_LOGGING
       ? process.env.TYPEORM_LOGGING.split(',')
-      : ['error', 'query']
+      : ['error']
   },
   telegram: {
     token: process.env.TELEGRAM_TOKEN,

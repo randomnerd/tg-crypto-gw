@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm'
-import { ExtendedContext } from '../telegram/context'
 import { Base } from './base'
-import { UpdateType, MessageSubTypes } from 'telegraf/typings/telegram-types'
+import { Update, UpdateType } from 'telegraf/typings/telegram-types'
 
 @Entity()
 export class TelegramLog extends Base {
@@ -12,8 +11,8 @@ export class TelegramLog extends Base {
     user_id?: number
 
     @Column()
-    type: UpdateType
+    updateType: UpdateType
 
     @Column({ type: 'jsonb' })
-    update: ExtendedContext['update']
+    update: Update
 }

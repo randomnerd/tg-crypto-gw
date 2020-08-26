@@ -4,6 +4,7 @@ import moleculer from 'moleculer'
 import TelegramService from 'services/telegram.service'
 import { SceneContext } from 'telegraf/typings/stage'
 import { User } from 'entity/user'
+import { TelegramConfig } from './typings'
 
 export interface WizardContext<TContext extends WizardContextMessageUpdate> {
     ctx: TContext
@@ -22,6 +23,7 @@ export interface WizardContextMessageUpdate extends TelegrafContext {
 
 export class ExtendedContext extends TelegrafContext {
     dbUser?: User
+    config: TelegramConfig
     service: TelegramService
     broker: moleculer.ServiceBroker
     logger: moleculer.LoggerInstance

@@ -9,17 +9,15 @@ export default class TelegramLogService extends DbService<TelegramLog> {
     @Event()
     async 'telegram-log.update'(ctx: moleculer.Context<ExtendedContext>) {
         const tgCtx = ctx.params
+        const update = tgCtx.update[tgCtx.updateType]
+        if (tgCtx.dbUser && update.from) delete update.from
         const dbUpdate = await this.repo.save({
-            id: tgCtx.update.update_id,
+            update,
             user_id: tgCtx.dbUser?.id,
-            type: tgCtx.updateType,
-            update: tgCtx.update,
+            id: tgCtx.update.update_id,
+            updateType: tgCtx.updateType,
         })
-        this.logger.info(`Seen update`, dbUpdate)
+        this.logger.info(`Seen update`, dbUpdate, new Date(update.date * 1000))
         // await this.repo.save({ user_id: update })
-    }
-
-    async started() {
-        this.logger.info('started!', await this.repo.find())
     }
 }
