@@ -31,11 +31,11 @@ export function getDbMixin<T>(entity: T): DbMixin<T> {
         async started(this: moleculer.Service) {
             this.connection = await getConnection()
             this.repo = this.connection.getRepository(entity)
-            this.logger.info('DbMixin started')
+            // this.logger.info('DbMixin started')
         },
 
-        async stopped() {
-            this.logger.info('DbMixin stopped')
-        },
+        // async stopped() {
+        //     this.logger.info('DbMixin stopped')
+        // },
     }
 }

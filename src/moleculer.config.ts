@@ -22,7 +22,7 @@ const brokerConfig: BrokerOptions = {
             // Custom object printer. If not defined, it uses the `util.inspect` method.
             objectPrinter: null,
             // Auto-padding the module name in order to messages begin at the same column.
-            autoPadding: true,
+            autoPadding: false,
         },
     },
     // cacher: {
@@ -37,7 +37,7 @@ const brokerConfig: BrokerOptions = {
     //         },
     //     },
     // },
-    transporter: 'nats://localhost:4222',
+    transporter: 'nats://127.0.0.1:4222',
     serializer: 'JSON',
     requestTimeout: 90 * 1000,
     retryPolicy: {
@@ -123,7 +123,7 @@ const brokerConfig: BrokerOptions = {
         // Maximum concurrent executions.
         concurrency: 10,
         // Maximum size of queue
-        maxQueueSize: 100,
+        maxQueueSize: 2048,
     },
 
     // Enable parameters validation. More info: https://moleculer.services/docs/0.13/validating.html
@@ -145,7 +145,7 @@ const brokerConfig: BrokerOptions = {
 
     // Watch the loaded services and hot reload if they changed.
     // You can also enable it in Moleculer Runner with `--hot` argument
-    hotReload: false,
+    hotReload: true,
 
     // Register custom middlewares
     middlewares: [],

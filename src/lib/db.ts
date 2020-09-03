@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import path from 'path'
 import config from 'config'
 import { ConnectionManager, ConnectionOptions, Connection } from 'typeorm'
 import { EventEmitter } from 'events'
 import { User } from '../entity/user'
+import { Block, ViewBlock } from '../entity/block'
+import { Transaction, ViewTransaction } from '../entity/transaction'
 import { TelegramLog } from '../entity/telegram-log'
 import { Payment } from '../entity/payment'
+import { randomBytes } from 'crypto'
 
 const ormconfig = {
     ...config.get<ConnectionOptions>('db'),
-    entities: [User, TelegramLog, Payment],
+    entities: [User, TelegramLog, Payment, Block, ViewBlock, Transaction, ViewTransaction],
     // entities: [path.join(__dirname, '..', 'entity', '**/*.{ts,js}')],
 }
 
@@ -52,3 +56,7 @@ export class ConnectionWrapper extends EventEmitter {
 }
 const wrapper = new ConnectionWrapper()
 export const getConnection = async (name?: string) => await wrapper.getConnection(name)
+export type Nullable = false | null | undefined | '' | 0
+export const makeIntId = () => Math.round(Math.random() * 2147483647)
+export const makeStrId = () => makeIntId().toString(16)
+

@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryColumn, Index } from 'typeorm'
+import { Entity, Column, PrimaryColumn, Index, Not, ManyToOne } from 'typeorm'
 import BN from 'bn.js'
 import { Base } from './base'
 import { PaymentStatus } from '../lib/capusta'
+import { User } from './user'
 
 @Entity()
 export class Payment extends Base {
@@ -18,9 +19,15 @@ export class Payment extends Base {
     @Column({ default: 'RUB' })
     currency: string
 
+    @Column({ default: false })
+    crypto: boolean
+
     @Column()
     @Index()
     user_id: number
+
+    @ManyToOne(_ => User, u => u.payments)
+    user: User
 
     @Column({ type: 'timestamp without time zone' })
     expire: Date
@@ -29,7 +36,11 @@ export class Payment extends Base {
     user_notified: boolean
 
     @Column()
-    pay_url: string
+    @Index({ where: 'crypto=true' })
+    pay_addr: string
+
+    @Column({ nullable: true })
+    addr_path: string
 
     @Column('enum', { enum: PaymentStatus, default: PaymentStatus.CREATED })
     @Index()

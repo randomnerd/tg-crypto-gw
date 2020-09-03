@@ -1,9 +1,10 @@
 import { Service, Event, Action, Method } from 'moleculer-decorators'
 import { getDbMixin, DbService } from '../lib/dbmixin'
 import { Payment } from '../entity/payment'
-import { Capusta, CapustaConfig, PaymentStatus, CapustaPayment } from '../lib/capusta'
+import { Capusta, CapustaConfig, PaymentStatus } from '../lib/capusta'
 import config from 'config'
-import { after, hours, minutes } from '../lib/time'
+import { after, minutes } from '../lib/time'
+import { makeId } from '../lib/db'
 
 @Service({ name: 'payment', mixins: [getDbMixin(Payment)], dependencies: ['telegram'] })
 export default class PaymentService extends DbService<Payment> {
@@ -33,7 +34,7 @@ export default class PaymentService extends DbService<Payment> {
     ) {
         const user = await this.connection.getRepository('user').findOne(user_id)
         if (!user) throw new Error('User not found')
-        const { id, payUrl, expire } = await this.capusta.createPayment(amount, expire_at)
+        const { id, payUrl, expire } = await this.capusta.createPayment(makeId(), amount, expire_at)
         const foreign_id = payUrl.split('bill')[1]
         const payment: Payment = await this.repo.save({
             id,
@@ -55,7 +56,7 @@ export default class PaymentService extends DbService<Payment> {
             this.updating = true
             const payments = await this.repo.find({ where: { status: PaymentStatus.CREATED } })
             await Promise.all(payments.map(p => this.processPayment(p)))
-            this.updateTimer = setTimeout(() => void this.updatePayments(), 60 * 1000)
+            this.updateTimer = setTimeout(() => void this.updatePayments(), 10 * 1000)
         } catch (e) {
             this.logger.error(e)
         } finally {
@@ -116,7 +117,7 @@ export default class PaymentService extends DbService<Payment> {
     }
 
     @Event()
-    async 'payment.created'({ id, user_id, amount, currency, pay_url }: Payment) {
+    async 'payment.created'({ id, user_id, amount, currency, pay_addr: pay_url }: Payment) {
         const msg = `Make your ${amount.toString()} ${currency} payment [here](${pay_url}) (ID: ${id})`
         await this.broker.call('telegram.sendMessage', { chat: user_id, msg })
     }

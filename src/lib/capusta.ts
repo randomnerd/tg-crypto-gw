@@ -143,10 +143,10 @@ export class Capusta {
         return result.status ? new CapustaPaymentStatus(result) : result
     }
 
-    public createPayment(amount: number, expire?: Date): Promise<CapustaPayment> {
+    public createPayment(id, amount: number, expire?: Date): Promise<CapustaPayment> {
         return this.callMethod('payment', {
+            id,
             expire: expire?.toISOString(),
-            id: randomBytes(8).toString('hex'),
             amount: {
                 amount: Math.round(amount * 100),
                 currency: 'RUB',

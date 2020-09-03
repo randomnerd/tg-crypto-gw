@@ -17,7 +17,6 @@ export default class TelegramLogService extends DbService<TelegramLog> {
             id: tgCtx.update.update_id,
             updateType: tgCtx.updateType,
         })
-        this.logger.info(`Seen update`, dbUpdate, new Date(update.date * 1000))
-        // await this.repo.save({ user_id: update })
+        // this.logger.info(`Seen update`, dbUpdate, new Date(update.date * 1000))
     }
 }

@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryColumn, Index } from 'typeorm'
+import { Entity, Column, PrimaryColumn, Index, ManyToOne } from 'typeorm'
 import { Base } from './base'
 import { Update, UpdateType } from 'telegraf/typings/telegram-types'
+import { User } from './user'
 
 @Entity()
 export class TelegramLog extends Base {
@@ -17,4 +18,7 @@ export class TelegramLog extends Base {
 
     @Column({ type: 'jsonb' })
     update: Update
+
+    @ManyToOne(_ => User, u => u.logs)
+    user: User
 }
