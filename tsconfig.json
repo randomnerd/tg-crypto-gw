@@ -5,7 +5,6 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "pretty": true,
-        "types": ["node"],
         "sourceMap": true,
         "target": "es6",
         "removeComments": true,

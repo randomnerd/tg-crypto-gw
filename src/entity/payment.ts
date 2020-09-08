@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, Index, Not, ManyToOne } from 'typeorm'
+import { Entity, Column, PrimaryColumn, Index, ManyToOne } from 'typeorm'
 import BN from 'bn.js'
 import { Base } from './base'
 import { PaymentStatus } from '../lib/capusta'
@@ -40,9 +40,13 @@ export class Payment extends Base {
     pay_addr: string
 
     @Column({ nullable: true })
-    addr_path: string
+    addr_height?: number
 
     @Column('enum', { enum: PaymentStatus, default: PaymentStatus.CREATED })
     @Index()
     status: PaymentStatus
+
+    get idNumber() {
+        return parseInt(this.id, 16)
+    }
 }

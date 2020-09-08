@@ -21,13 +21,13 @@ export const launchBot = async (service: TelegramService) => {
     bot.help(async ctx => {
         const commands = await tg.getMyCommands()
         const info = commands.reduce((acc, val) => `${acc}/${val.command} - ${val.description}\n`, '')
-        return ctx.reply(info)
+        await ctx.reply(info)
     })
     await bot.launch(tgConfig.launchOptions).catch(bot.context.logger.error)
     return bot
 }
 
 export const stopBot = async () => {
-    await bot.stop().catch(bot.context.logger.error)
+    await bot.stop().catch(bot.context?.logger?.error)
     return bot
 }

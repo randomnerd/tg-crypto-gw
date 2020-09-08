@@ -37,7 +37,7 @@ const brokerConfig: BrokerOptions = {
     //         },
     //     },
     // },
-    transporter: 'nats://127.0.0.1:4222',
+    // transporter: 'nats://127.0.0.1:4222',
     serializer: 'JSON',
     requestTimeout: 90 * 1000,
     retryPolicy: {

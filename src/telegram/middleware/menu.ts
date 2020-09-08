@@ -16,10 +16,10 @@ menu.toggle('Toggle menu', 'toggle me', {
     },
     isSet: () => mainMenuToggle,
 })
-menu.interact('Make payment', 'create-payment', {
+menu.interact('Make payment', 'createPayment', {
     hide: () => mainMenuToggle,
-    do: async ctx => {
-        await ctx.scene.enter('create-payment', {})
+    do: ctx => {
+        void ctx.scene.enter('createPayment', {})
         return true
     },
 })

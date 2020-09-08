@@ -10,6 +10,7 @@
       "rules": {
         "sort-imports": ["off", { "ignoreCase": true }],
         "no-void": "off",
+        "no-case-declarations": "off",
         "@typescript-eslint/ban-ts-comment": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-explicit-any": "off",

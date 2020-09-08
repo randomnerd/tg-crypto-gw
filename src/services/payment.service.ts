@@ -1,10 +1,12 @@
 import { Service, Event, Action, Method } from 'moleculer-decorators'
+import { User } from '../entity/user'
 import { getDbMixin, DbService } from '../lib/dbmixin'
 import { Payment } from '../entity/payment'
 import { Capusta, CapustaConfig, PaymentStatus } from '../lib/capusta'
 import config from 'config'
 import { after, minutes } from '../lib/time'
-import { makeId } from '../lib/db'
+import { makeId } from '../lib/tmp'
+import { EthereumPaymentInfo } from './ethereum.service'
 
 @Service({ name: 'payment', mixins: [getDbMixin(Payment)], dependencies: ['telegram'] })
 export default class PaymentService extends DbService<Payment> {
@@ -20,31 +22,36 @@ export default class PaymentService extends DbService<Payment> {
         clearTimeout(this.updateTimer)
     }
 
-    @Action({ params: { user_id: 'number', amount: 'number' } })
-    async create({ params: { user_id, amount } }) {
-        return await this.createPayment(user_id, amount)
+    @Action({ params: { user_id: 'number', amount: 'number', currency: 'string' } })
+    async create({ params: { user_id, amount, currency } }) {
+        return await this.createPayment(user_id, amount, currency)
     }
 
     @Method
-    async createPayment(
-        user_id: number,
-        amount: number,
-        currency: string = 'RUB',
-        expire_at = after(minutes(30))
-    ) {
-        const user = await this.connection.getRepository('user').findOne(user_id)
+    async createPayment(user_id: number, amount: number, currency: string, expire = after(minutes(30))) {
+        const user = await this.connection.getRepository(User).findOne(user_id)
         if (!user) throw new Error('User not found')
-        const { id, payUrl, expire } = await this.capusta.createPayment(makeId(), amount, expire_at)
-        const foreign_id = payUrl.split('bill')[1]
-        const payment: Payment = await this.repo.save({
-            id,
-            amount,
-            currency,
-            expire,
-            user_id,
-            foreign_id,
-            pay_url: payUrl,
-        })
+        const id = makeId('string')
+        const payment = this.repo.create({ id, amount, expire, currency, user_id, crypto: false })
+        switch (currency) {
+            case 'RUB':
+                const cPayment = await this.capusta.createPayment(payment.id, amount, expire)
+                payment.foreign_id = cPayment.payUrl.split('bill')[1]
+                payment.pay_addr = cPayment.payUrl
+                break
+            case 'ETH':
+                if (!this.broker.services.find(s => s.name === 'ethereum')) {
+                    throw new Error('ethereum service not found')
+                }
+                payment.crypto = true
+                const info = await this.broker.call<EthereumPaymentInfo, any>('ethereum.paymentInfo', { id })
+                this.logger.info(info)
+                Object.assign(payment, info)
+                break
+            default:
+                throw new Error('Invalid currency')
+        }
+        await this.connection.getRepository(Payment).save(payment)
         await this.broker.broadcast('payment.created', payment)
         return payment
     }
@@ -67,6 +74,7 @@ export default class PaymentService extends DbService<Payment> {
     @Method
     async processPayment(payment: Payment) {
         try {
+            if (payment.crypto) return console.dir(payment)
             const rawPayment = await this.capusta.paymentStatus(payment.id)
             if (!rawPayment) {
                 this.logger.error(`Payment not found`, rawPayment)

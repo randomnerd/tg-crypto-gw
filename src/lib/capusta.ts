@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
-import { randomBytes } from 'crypto'
 import { before, days, after, hours } from './time'
+import { makeId } from './tmp'
+import { Payment } from '../entity/payment'
 
 export interface CapustaConfig {
     email: string
@@ -142,6 +143,21 @@ export class Capusta {
         const result = await this.callGetMethod('status', { 'transaction-id': id }, true)
         return result.status ? new CapustaPaymentStatus(result) : result
     }
+
+    // public async createPayment(amount: number, expire?: Date) {
+    //     const id = makeId('string')
+    //     const result = await this.callMethod('payment', {
+    //         id,
+    //         expire: expire?.toISOString(),
+    //         amount: {
+    //             amount: Math.round(amount * 100),
+    //             currency: 'RUB',
+    //         },
+    //     })
+    //     const payment = Payment.create({})
+    //     payment.pay_addr = result.payUrl
+    //     payment.foreign_id = result.payUrl.split('bill')[1]
+    // }
 
     public createPayment(id, amount: number, expire?: Date): Promise<CapustaPayment> {
         return this.callMethod('payment', {

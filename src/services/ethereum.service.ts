@@ -17,6 +17,12 @@ export interface CryptoConfig {
     baseAccount: number
 }
 
+export interface EthereumPaymentInfo {
+    foreign_id: string
+    pay_addr: string
+    addr_height: number
+}
+
 @Service({ name: 'ethereum', dependencies: ['user'] })
 export default class EthereumService extends moleculer.Service {
     private db: Connection
@@ -62,6 +68,16 @@ export default class EthereumService extends moleculer.Service {
         await this.onTransaction(block, tx)
     }
 
+    @Action({ params: { id: 'string' } })
+    async paymentInfo({ params: { id } }): Promise<EthereumPaymentInfo> {
+        const intId = parseInt(id, 16)
+        const wallet = this.createWallet(intId)
+        const pay_addr = await wallet.getAddress()
+        const foreign_id = this.getPath(intId)
+        const addr_height = await this.provider?.getBlockNumber()
+        return { foreign_id, pay_addr, addr_height }
+    }
+
     @Method
     createWallet(id: number, change = false, account?: number) {
         const wallet = Wallet.fromMnemonic(
@@ -99,7 +115,7 @@ export default class EthereumService extends moleculer.Service {
         return this.txs.save({
             block_id: block.id,
             hash: tx.hash,
-            value: tx.value,
+            value: Number(utils.formatEther(tx.value)),
             to: tx.to,
         })
         // .catch(this.logger.error)
