@@ -13,7 +13,7 @@ export class Payment extends Base {
     @Index({ sparse: true })
     foreign_id?: string
 
-    @Column({ type: 'decimal', transformer: { to: (v: BN) => v.toString(10, 20), from: v => new BN(v) } })
+    @Column({ type: 'decimal', transformer: { to: (v: BN) => v.toString(), from: v => Number(v) } })
     amount: BN
 
     @Column({ default: 'RUB' })
