@@ -11,6 +11,22 @@ export default class UserService extends DbService<User> {
         return await this._save(tgUser)
     }
 
+    @Action()
+    async checkMessage({ params: { u, m } }) {
+        const user = await this.repo.findOne(u)
+        if (!user) throw new Error('User not found')
+        return user.checkMessage(m)
+    }
+
+    @Action()
+    async signMessage({ params: { u, m } }) {
+        const user = await this.repo.findOne(u)
+        if (!user) throw new Error('User not found')
+        const msg = user.signMessage(m)
+        await this.repo.save(user)
+        return msg
+    }
+
     @Method
     async _save(tgUser: TelegramUser) {
         const user = await this.repo.save({ ...tgUser, updated_at: new Date() })

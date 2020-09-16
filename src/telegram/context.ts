@@ -23,6 +23,9 @@ import { TelegramConfig } from './typings'
 // }
 
 export class ExtendedContext extends Context {
+    command?: string
+    args?: string
+    splitArgs?: string[]
     dbUser?: User
     config: TelegramConfig
     service: TelegramService
@@ -31,4 +34,5 @@ export class ExtendedContext extends Context {
     wizard: WizardContext<this>
     scene: SceneContext<this>
     session: { [key: string]: any }
+    startPayload?: string
 }
